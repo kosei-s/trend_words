@@ -1,0 +1,17 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+    </head>
+    <body>
+        <h3>以下のトレンド情報サイトから今一番ホットなワードを抽出</h3>
+        <p>
+            {% for i in range(urls|length): %}
+                <a href="{{ urls[i] }}" target="_blank">{{ titles[i] }}</a><br>
+            {% endfor %}
+        </p>
+        <form action="/list" method="post">
+            <input type="submit" value="送信">
+        </form>
+    </body>
+</html>
