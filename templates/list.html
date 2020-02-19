@@ -10,5 +10,20 @@
                 <a href="{{ urls[i] }}" target="_blank">{{ titles[i] }}</a><br>
             {% endfor %}
         </p>
+        <p>
+            ↓<br/>
+            結果：<br/>
+        </p>
+        <p>
+            {% for elems in elems_list: %}
+                {% for elem in elems %}
+                    {{ elem.getText() }}
+                {% endfor %}
+            {% endfor %}
+        </p>
+        <p>
+            デバッグ<br/>
+            {{ text }}
+        </p>
     </body>
 </html>

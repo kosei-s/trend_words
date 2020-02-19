@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request
 import requests, bs4
+import json
+import urllib.parse
 
 app = Flask(__name__)
 
 urls = [
     'https://trends.google.co.jp/trends/?geo=JP',
-    'https://search.yahoo.co.jp/'
+    'https://search.yahoo.co.jp/#!/web'
 ]
 titles = [
     'Google Trends',
@@ -18,25 +20,36 @@ def index():
 
 @app.route('/list', methods=['POST'])
 def list():
-    # url = request.form['URL']
+    res_list = []
+    soup_list = []
 
-    # try:
-    #     res = requests.get(url)
-    # except Exception as exc:
-    #     return '正しいURLを入力してください'
+    phantomjs_key = 'ak-8dpg0-2qazt-9hcfv-ye32h-npvc1'
 
-    # try:
-    #     res.raise_for_status()
-    # except Exception as exc:
-    #     return '正しいURLを入力してください'
+    # Google Trends
+    payload = {'url': urls[0], 'renderType': 'HTML', 'outputAsJson': 'true'}
+    payload = json.dumps(payload) # JSONパース
+    payload = urllib.parse.quote(payload, safe='') # URIパース
+    urls[0] = "https://phantomjscloud.com/api/browser/v2/" + phantomjs_key + "/?request=" + payload
+
+
+    for i in range(len(urls)):
+        res_list.append(requests.get(urls[i]))
+        soup_list.append(bs4.BeautifulSoup(res_list[i].text))
     
-    # soup = bs4.BeautifulSoup(res.text)
-    # link_elems = soup.select('a')
-    # link_urls = []
-    # for i in range(len(link_elems)):
-    #     link_urls.append(link_elems[i].get('href'))
+    # 基本、動的サイトなのでうまくスクレイピングできない
+    # seleniumとphantomjsを使う
+
+    elems_list = []
+
+    # Google Trends
+    soup_list[0] = bs4.BeautifulSoup(res_list[0].json()['content']['data'], 'html.parser')
+    elems_list.append(soup_list[0].select('.recently-trending-list-item'))
+
+    # debug
+    #print(len(elems_list[0]))
+    #print(soup_list[0].text)
     
-    return render_template('list.html', urls=urls, titles=titles)
+    return render_template('list.html', urls=urls, titles=titles, elems_list=elems_list, text=soup_list[0].text)
 
 if __name__ == '__main__':
     app.debug = True
