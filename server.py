@@ -20,36 +20,41 @@ def index():
 
 @app.route('/list', methods=['POST'])
 def list():
-    res_list = []
-    soup_list = []
+    elems_list = []
 
+    # PhantomJS Cloud用のKey (自身のもの)
     phantomjs_key = 'ak-8dpg0-2qazt-9hcfv-ye32h-npvc1'
 
     # Google Trends
+
+    # JS動作後のページを取得
     payload = {'url': urls[0], 'renderType': 'HTML', 'outputAsJson': 'true'}
     payload = json.dumps(payload) # JSONパース
     payload = urllib.parse.quote(payload, safe='') # URIパース
     urls[0] = "https://phantomjscloud.com/api/browser/v2/" + phantomjs_key + "/?request=" + payload
 
+    res = requests.get(urls[0])
+    soup = bs4.BeautifulSoup(res.json()['content']['data'], 'html.parser')
+    elems_list.append(soup.select('.recently-trending-list-item'))
 
-    for i in range(len(urls)):
-        res_list.append(requests.get(urls[i]))
-        soup_list.append(bs4.BeautifulSoup(res_list[i].text))
+    # Yahoo! 急上昇ワード
+
+    # JS動作後のページを取得
+    payload = {'url': urls[1], 'renderType': 'HTML', 'outputAsJson': 'true'}
+    payload = json.dumps(payload) # JSONパース
+    payload = urllib.parse.quote(payload, safe='') # URIパース
+    urls[1] = "https://phantomjscloud.com/api/browser/v2/" + phantomjs_key + "/?request=" + payload
+
+    res = requests.get(urls[1])
+    soup = bs4.BeautifulSoup(res.json()['content']['data'], 'html.parser')
+    elems_list.append(soup.select('p.que_2 a')) # ここはYahoo用のを見つける
     
-    # 基本、動的サイトなのでうまくスクレイピングできない
-    # seleniumとphantomjsを使う
-
-    elems_list = []
-
-    # Google Trends
-    soup_list[0] = bs4.BeautifulSoup(res_list[0].json()['content']['data'], 'html.parser')
-    elems_list.append(soup_list[0].select('.recently-trending-list-item'))
 
     # debug
     #print(len(elems_list[0]))
     #print(soup_list[0].text)
     
-    return render_template('list.html', urls=urls, titles=titles, elems_list=elems_list, text=soup_list[0].text)
+    return render_template('list.html', urls=urls, titles=titles, elems_list=elems_list)
 
 if __name__ == '__main__':
     app.debug = True

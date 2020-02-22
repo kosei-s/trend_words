@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="ja">
     <head>
+        <link rel="stylesheet" href="/static/css/style.css">
     </head>
     <body>
         <h3>以下のトレンド情報サイトから今一番ホットなワードを抽出</h3>
@@ -15,15 +16,12 @@
             結果：<br/>
         </p>
         <p>
-            {% for elems in elems_list: %}
-                {% for elem in elems %}
-                    {{ elem.getText() }}
+            {% for i in range(urls|length): %}
+                {{ titles[i] }}:<br/>
+                {% for elem in elems_list[i] %}
+                    {{ elem.getText() }}<br/>
                 {% endfor %}
             {% endfor %}
-        </p>
-        <p>
-            デバッグ<br/>
-            {{ text }}
         </p>
     </body>
 </html>
