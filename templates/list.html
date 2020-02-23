@@ -1,27 +1,28 @@
 <!-- list.html -->
 <!DOCTYPE html>
 <html lang="ja">
-    <head>
-        <link rel="stylesheet" href="/static/css/style.css">
-    </head>
-    <body>
-        <h3>以下のトレンド情報サイトから今一番ホットなワードを抽出</h3>
-        <p>
-            {% for i in range(urls|length): %}
-                <a href="{{ urls[i] }}" target="_blank">{{ titles[i] }}</a><br>
+<head>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h3>以下のトレンド情報サイトから今一番ホットなワードを抽出</h3>
+    <p>
+        {% for i in range(urls|length): %}
+            <a href="{{ urls[i] }}" target="_blank">{{ titles[i] }}</a><br>
+        {% endfor %}
+    </p>
+    <p>
+        ↓<br/>
+        結果：<br/>
+    </p>
+    <p>
+        {% for i in range(urls|length): %}
+            <p class="title">{{ titles[i] }}:</p>
+            {% for elem in elems_list[i] %}
+                {{ elem.getText() }}<br/>
             {% endfor %}
-        </p>
-        <p>
-            ↓<br/>
-            結果：<br/>
-        </p>
-        <p>
-            {% for i in range(urls|length): %}
-                {{ titles[i] }}:<br/>
-                {% for elem in elems_list[i] %}
-                    {{ elem.getText() }}<br/>
-                {% endfor %}
-            {% endfor %}
-        </p>
-    </body>
+            <br/>
+        {% endfor %}
+    </p>
+</body>
 </html>
